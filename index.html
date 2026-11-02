@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Создание открыток</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #f0f4f8;
+            margin: 0;
+            padding: 30px 20px;
+            color: #2c3e50;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 24px;
+        }
+
+        
+        .app-container {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            flex-wrap: wrap;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+       
+        .creator-panel {
+            width: 350px;
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            height: fit-content;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 10px;
+            font-size: 14px;
+            font-family: inherit;
+            border: 2px solid #cbd5e0;
+            border-radius: 8px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        input:focus, select:focus {
+            border-color: #3182ce;
+        }
+
+        button {
+            padding: 12px;
+            font-size: 16px;
+            font-weight: bold;
+            color: #fff;
+            background: #3182ce;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.15);
+            transition: background 0.2s, transform 0.1s;
+            width: 100%;
+            font-family: inherit;
+        }
+
+        button:hover:not(:disabled) {
+            background: #2b6cb0;
+        }
+
+        button:active:not(:disabled) {
+            transform: scale(0.97);
+        }
+
+        button:disabled {
+            background: #a0aec0;
+            cursor: not-allowed;
+            box-shadow: none;
+            opacity: 0.7;
+        }
+
+        
+        .history-panel {
+            width: 500px;
+        }
+
+        .history-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .history-header h2 {
+            margin: 0;
+            font-size: 20px;
+        }
+
+        .btn-clear {
+            width: auto;
+            padding: 8px 15px;
+            font-size: 13px;
+            background: #e53e3e;
+        }
+        .btn-clear:hover {
+            background: #c53030;
+        }
+
+        .history-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        
+        .postcard {
+            padding: 25px 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            min-height: 180px;
+            position: relative;
+            word-wrap: break-word;
+        }
+
+        .postcard .pc-text {
+            font-size: 16px;
+            margin-bottom: 20px;
+            flex-grow: 1;
+            line-height: 1.5;
+            white-space: pre-wrap; /* Сохраняем переносы строк */
+        }
+
+        .postcard .pc-footer {
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
+            font-weight: bold;
+            border-top: 1px solid rgba(0,0,0,0.1);
+            padding-top: 10px;
+        }
+
+        
+        .theme-light {
+            background: #ffffff;
+            color: #333;
+            border: 2px solid #e2e8f0;
+        }
+        .theme-light .pc-footer { border-top-color: #e2e8f0; color: #718096; }
+
+        
+        .theme-dark {
+            background: #2d3748;
+            color: #f7fafc;
+            border: 2px solid #4a5568;
+        }
+        .theme-dark .pc-footer { border-top-color: #4a5568; color: #a0aec0; }
+
+        
+        .theme-ocean {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: #fff;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+        }
+        .theme-ocean .pc-footer { border-top-color: rgba(255,255,255,0.4); color: #e0f2fe; }
+
+        
+        .theme-newyear {
+            background-color: #1a202c;
+            background-image: 
+                radial-gradient(circle at 10% 20%, white 1px, transparent 1px),
+                radial-gradient(circle at 90% 80%, white 1px, transparent 1px),
+                radial-gradient(circle at 50% 50%, white 1px, transparent 1px);
+            background-size: 50px 50px;
+            color: #f6e05e;
+            border: 2px solid #2f855a;
+        }
+        .theme-newyear .pc-footer { border-top-color: rgba(246, 224, 94, 0.3); color: #ecc94b; }
+        .theme-newyear::before {
+            content: "🎄";
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 24px;
+        }
+
+        
+        .theme-love {
+            background: #fff5f5;
+            background-image: radial-gradient(#fed7d7 2px, transparent 2px);
+            background-size: 20px 20px;
+            color: #c53030;
+            border: 2px dashed #feb2b2;
+        }
+        .theme-love .pc-footer { border-top-color: #feb2b2; color: #e53e3e; }
+        .theme-love::before {
+            content: "❤";
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 24px;
+        }
+
+        .empty-history {
+            text-align: center;
+            color: #718096;
+            padding: 40px 0;
+            font-style: italic;
+        }
+
+        @media (max-width: 900px) {
+            .app-container { flex-direction: column; align-items: center; }
+            .creator-panel, .history-panel { width: 100%; max-width: 500px; }
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Создание открыток</h1>
+
+    <div class="app-container">
+        
+        
+        <div class="creator-panel">
+            <div class="input-group">
+                <input type="text" id="pcText" placeholder="текст">
+                <input type="text" id="pcFrom" placeholder="от кого">
+                <input type="text" id="pcTo" placeholder="кому">
+                
+                <select id="pcTheme">
+                    <option value="theme-light">Светлая тема</option>
+                    <option value="theme-dark">Темная тема</option>
+                    <option value="theme-ocean">Морская тема</option>
+                    <option value="theme-newyear">Новогодняя тема</option>
+                    <option value="theme-love">Романтичная тема</option>
+                </select>
+            </div>
+            
+            <button id="sendBtn" disabled onclick="createPostcard()">Отправить</button>
+        </div>
+
+        
+        <div class="history-panel">
+            <div class="history-header">
+                <h2>История открыток</h2>
+                <button class="btn-clear" onclick="clearHistory()">Очистить историю</button>
+            </div>
+            
+            <div class="history-list" id="historyList">
+                <!-- Сюда загружаются открытки из localStorage -->
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        
+        const inputText = document.getElementById('pcText');
+        const inputFrom = document.getElementById('pcFrom');
+        const inputTo = document.getElementById('pcTo');
+        const sendBtn = document.getElementById('sendBtn');
+
+        function checkInputs() {
+            const isFilled = 
+                inputText.value.trim() !== '' && 
+                inputFrom.value.trim() !== '' && 
+                inputTo.value.trim() !== '';
+            
+            sendBtn.disabled = !isFilled;
+        }
+
+        
+        [inputText, inputFrom, inputTo].forEach(input => {
+            input.addEventListener('input', checkInputs);
+        });
+
+        
+        
+        
+        let postcards = JSON.parse(localStorage.getItem('postcardsHistory')) || [];
+
+        const historyList = document.getElementById('historyList');
+
+        
+        function renderPostcard(card, index) {
+            const div = document.createElement('div');
+            
+            div.className = `postcard ${card.theme}`;
+            
+            div.innerHTML = `
+                <div class="pc-text">${card.text}</div>
+                <div class="pc-footer">
+                    <span>От: ${card.from}</span>
+                    <span>Кому: ${card.to}</span>
+                </div>
+            `;
+            return div;
+        }
+
+        
+        function renderHistory() {
+            historyList.innerHTML = '';
+            
+            if (postcards.length === 0) {
+                historyList.innerHTML = '<div class="empty-history">Пока нет созданных открыток</div>';
+                return;
+            }
+
+            
+            postcards.slice().reverse().forEach((card, index) => {
+                const cardEl = renderPostcard(card);
+                historyList.appendChild(cardEl);
+            });
+        }
+
+        
+        function createPostcard() {
+            
+            const newCard = {
+                text: inputText.value.trim(),
+                from: inputFrom.value.trim(),
+                to: inputTo.value.trim(),
+                theme: document.getElementById('pcTheme').value
+            };
+
+            
+            postcards.push(newCard);
+            
+            
+            localStorage.setItem('postcardsHistory', JSON.stringify(postcards));
+
+            
+            renderHistory();
+
+            
+            inputText.value = '';
+            inputFrom.value = '';
+            inputTo.value = '';
+            sendBtn.disabled = true;
+        }
+
+        
+        function clearHistory() {
+            if (confirm('Удалить всю историю открыток?')) {
+                postcards = [];
+                localStorage.removeItem('postcardsHistory');
+                renderHistory();
+            }
+        }
+
+        
+        renderHistory();
+
+    </script>
+</body>
+</html>
